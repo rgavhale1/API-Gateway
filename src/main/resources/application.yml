@@ -1,0 +1,47 @@
+eureka:
+  client:
+    fetch-registry: true
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    service-url:
+      defaultZone : http://localhost:8761/eureka
+  instance:
+    hostname: localhost    
+server:
+  port: 8082
+  servlet:
+    context-path: /Api-Gateway-Server
+spring:
+  application:
+    name: Api-Gateway
+  main:
+    web-application-type: reactive  
+  cloud:
+    gateway:
+      routes: 
+       - id: UserServer
+         uri: lb://UserServer
+         predicates:
+            - Path=/UserServer/**
+         #filters:
+           # - name : CircuitBreaker
+            #  args : 
+             #     name : UserServer
+              #    fallbackuri: forward:/userFallback
+       - id : /DepartmentServer
+         uri: lb://DepartmentServer
+         predicates:
+            - Path=/DepartmentServer/**
+         #filters:
+           # - name : CircuitBreaker
+            #  args :
+              #   name : DepartmentServer
+                # fallbackuri : forward:/departmentFallback
+      discovery:
+        locator:
+          enabled: true            
+management:
+  endpoint:
+    info:
+      enabled: true       
